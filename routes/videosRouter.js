@@ -1,42 +1,54 @@
 const express = require("express");
 const router = express.Router();
 const fs = require('fs');
+const {v4:uuidv4} = require('uuid')
 
-const FILE_PATH = './data/videos.json'
+const fetchVideos = () => {
+    return JSON.parse(fs.readFileSync('./data/videos.json'))
+}
+
+const addVideo = (newVideo) => {
+    const videoDetailsArray = fetchVideos()
+    fs.writeFileSync('./data/videos.json', JSON.stringify([...videoDetailsArray, newVideo]))
+    return newVideo
+}
+
+
 //GET /
-router.get("/", (req, res) => {   
-    //here where regular javaScipt goes
-    const videoFile = fs.readFileSync(FILE_PATH)
-    const videoData = JSON.parse(videoFile)
-    const filterVideoData = videoData.map((video) => {
-        const videoItem = {
+router.route("/")
+    .get((req, res) => {   
+        const filterVideoData = fetchVideos().map(video => ({
             id: video.id,
             title: video.title,
             channel: video.channel,
             image: video.image
-        }
-        return videoItem
-    })
+        }))
     res.status(200).json(filterVideoData)
-});
+    })
 
+    .post((req, res) => {
+        const { title, description, channel } = req.body
+        console.log(title, description)
+        if(!title || !description) return res.status(400).json("All requests must have a title and a description.")
+        let newVideo = {
+            title: title,
+            description: description,
+            channel: channel,
+            image: "http://localhost:8000/images/placeholder.png",
+            id: uuidv4()
+        }
+        const justAdded = addVideo(newVideo)
+        res.status(201).json(justAdded) 
+    })
 
 //GET /:id
 router.get("/:id", (req, res) => {
-    const videoFile = fs.readFileSync(FILE_PATH);
-    const videoData = JSON.parse(videoFile)
-    const video = videoData.find(oneVideo => oneVideo.id === req.params.id )
+    const video = fetchVideos().find(oneVideo => oneVideo.id === req.params.id)
     if (!video) {
         return res.status(404).json({error: "Video not found"})
     }
     res.status(200).json(video)
 });
-
-
-
-//POST /:id/comments
-
-//DELETE /:videoId/comments/:commentId
-
+console.log(fetchVideos())
 
 module.exports = router;
