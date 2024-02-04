@@ -33,9 +33,14 @@ router.route("/")
         let newVideo = {
             title: title,
             description: description,
-            channel: channel,
+            channel: "Unknown",
             image: "http://localhost:8000/images/placeholder.png",
-            id: uuidv4()
+            id: uuidv4(),
+            views: 0,
+            likes: 0,
+            duration: 0,
+            timestamp: Date.now(),
+            comments: []
         }
         const justAdded = addVideo(newVideo)
         res.status(201).json(justAdded) 
