@@ -1,6 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const fs = require('fs');
+const express = require("express")
+const router = express.Router()
+const fs = require('fs')
 const {v4:uuidv4} = require('uuid')
 
 const fetchVideos = () => {
@@ -15,7 +15,7 @@ const addVideo = (newVideo) => {
 
 //GET /
 router.route("/")
-    .get((req, res) => {   
+    .get((_req, res) => {   
         const filterVideoData = fetchVideos().map(video => ({
             id: video.id,
             title: video.title,
@@ -26,8 +26,7 @@ router.route("/")
     })
 
     .post((req, res) => {
-        const { title, description, channel } = req.body
-        console.log(title, description)
+        const { title, description } = req.body
         if(!title || !description) return res.status(400).json("All requests must have a title and a description.")
         let newVideo = {
             title: title,
