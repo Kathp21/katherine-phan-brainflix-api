@@ -13,7 +13,6 @@ const addVideo = (newVideo) => {
     return newVideo
 }
 
-
 //GET /
 router.route("/")
     .get((req, res) => {   
@@ -34,7 +33,7 @@ router.route("/")
             title: title,
             description: description,
             channel: "Unknown",
-            image: "http://localhost:8000/images/placeholder.png",
+            image: "http://localhost:8000/images/placeholder.jpg",
             id: uuidv4(),
             views: 0,
             likes: 0,
@@ -50,10 +49,9 @@ router.route("/")
 router.get("/:id", (req, res) => {
     const video = fetchVideos().find(oneVideo => oneVideo.id === req.params.id)
     if (!video) {
-        return res.status(404).json({error: "Video not found"})
+        return res.status(404).json({message: "No video with that id exists"})
     }
     res.status(200).json(video)
 });
-console.log(fetchVideos())
 
 module.exports = router;
